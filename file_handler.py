@@ -1,3 +1,20 @@
+"""
+file_handler.py – File handling for the Student Grade Tracker.
+
+Responsibilities:
+  - load_students()   : Read student records from a JSON file.
+  - save_students()   : Write student records to a JSON file.
+  - export_report()   : Write a plain-text summary report to disk.
+
+All functions include error handling so that file corruption or permission
+problems do not crash the application.
+
+References:
+  - Python json module: https://docs.python.org/3/library/json.html
+  - Python open() / file modes: https://docs.python.org/3/library/functions.html#open
+  - os.path module: https://docs.python.org/3/library/os.path.html
+"""
+
 import json
 import os
 from datetime import datetime
@@ -9,7 +26,15 @@ DATA_FILE = 'students.json'
 
 
 def load_students():
- 
+    """
+    Load student records from the JSON data file.
+
+    If the file does not exist, an empty list is returned so the application
+    can start fresh without raising an exception.
+
+    Returns:
+        list[dict]: A list of student dictionaries, or [] on failure.
+    """
     try:
         if not os.path.exists(DATA_FILE):
             return []  # No data file yet – first run
@@ -31,7 +56,18 @@ def load_students():
 
 
 def save_students(students):
+    """
+    Save the full list of student records to the JSON data file.
 
+    The file is overwritten on each save. A 'last_updated' timestamp is
+    included in the JSON for auditing purposes.
+
+    Args:
+        students (list[dict]): The student records to persist.
+
+    Returns:
+        bool: True if saved successfully, False if an error occurred.
+    """
     try:
         payload = {
             'last_updated': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
@@ -49,7 +85,18 @@ def save_students(students):
 
 
 def export_report(students, filename=None):
+    """
+    Export a sorted, human-readable grade report to a plain-text file.
 
+    Students are sorted by average grade (highest first) using bubble_sort.
+
+    Args:
+        students (list[dict]): The student records to include in the report.
+        filename (str | None): Output filename. Defaults to a timestamped name.
+
+    Returns:
+        str | None: The filename that was written, or None on failure.
+    """
     if filename is None:
         # Auto-generate a timestamped filename so reports don't overwrite each other
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
