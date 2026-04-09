@@ -1,21 +1,11 @@
 """
 main.py – Student Grade Tracker
 ================================
-IY499 Introduction to Programming – Practical Programming Assignment (50%)
-
-Author      : [YOUR NAME]
-P-Number    : [YOUR P-NUMBER]
-Course Code : IY499
-GitHub      : [YOUR GITHUB REPOSITORY URL]
+IY499 Introduction to Programming – Practical Programming Assignment
 
 Description:
     A desktop application for tracking, sorting, searching, and visualising
     student grades. Built with Python 3, Tkinter (GUI), and Matplotlib (charts).
-
-Declaration of Own Work:
-    I confirm that this assignment is my own work.
-    Where I have referred to online sources, I have provided comments
-    detailing the reference and included a link to the source.
 
 References:
   - Tkinter documentation: https://docs.python.org/3/library/tkinter.html
