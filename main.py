@@ -1,3 +1,31 @@
+"""
+main.py – Student Grade Tracker
+================================
+IY499 Introduction to Programming – Practical Programming Assignment (50%)
+
+Author      : [YOUR NAME]
+P-Number    : [YOUR P-NUMBER]
+Course Code : IY499
+GitHub      : [YOUR GITHUB REPOSITORY URL]
+
+Description:
+    A desktop application for tracking, sorting, searching, and visualising
+    student grades. Built with Python 3, Tkinter (GUI), and Matplotlib (charts).
+
+Declaration of Own Work:
+    I confirm that this assignment is my own work.
+    Where I have referred to online sources, I have provided comments
+    detailing the reference and included a link to the source.
+
+References:
+  - Tkinter documentation: https://docs.python.org/3/library/tkinter.html
+  - Tkinter ttk (themed widgets): https://docs.python.org/3/library/tkinter.ttk.html
+  - Embedding Matplotlib in Tkinter:
+        https://matplotlib.org/stable/gallery/user_interfaces/embedding_in_tk_sgskip.html
+  - Python datetime formatting: https://docs.python.org/3/library/datetime.html
+  - Regular expressions (re): https://docs.python.org/3/library/re.html
+"""
+
 import tkinter as tk
 from tkinter import ttk, messagebox
 import re
@@ -18,8 +46,23 @@ from file_handler import load_students, save_students, export_report
 # ──────────────────────────────────────────────────────────────────────────────
 
 class StudentTrackerApp:
+    """
+    Main application class for the Student Grade Tracker.
+
+    The GUI is organised as a ttk.Notebook with four tabs:
+      1. Students   – Add grades, view list, sort, remove students.
+      2. Search     – Find students by name using linear search.
+      3. Visualise  – Generate bar, pie, or histogram charts.
+      4. Report     – Class statistics and export to text file.
+    """
 
     def __init__(self, root: tk.Tk) -> None:
+        """
+        Initialise the main window and all widgets.
+
+        Args:
+            root (tk.Tk): The root Tkinter window.
+        """
         self.root = root
         self.root.title("Student Grade Tracker – IY499")
         self.root.geometry("960x680")
@@ -46,6 +89,7 @@ class StudentTrackerApp:
     # ── Styles ────────────────────────────────────────────────────────────────
 
     def _apply_styles(self) -> None:
+        """Configure ttk styles used across the application."""
         style = ttk.Style()
         style.theme_use('clam')
 
@@ -74,12 +118,14 @@ class StudentTrackerApp:
     # ── Notebook ──────────────────────────────────────────────────────────────
 
     def _build_notebook(self) -> None:
+        """Create the top-level tabbed notebook."""
         self.notebook = ttk.Notebook(self.root)
         self.notebook.pack(fill='both', expand=True, padx=12, pady=12)
 
     # ── Tab 1 : Students ──────────────────────────────────────────────────────
 
     def _build_tab_students(self) -> None:
+        """Build the Students tab (add grades, view list, sort, remove)."""
         tab = ttk.Frame(self.notebook)
         self.notebook.add(tab, text='📋  Students')
 
@@ -217,6 +263,7 @@ class StudentTrackerApp:
     # ── Tab 3 : Visualise ─────────────────────────────────────────────────────
 
     def _build_tab_visualise(self) -> None:
+        """Build the Visualise tab (Matplotlib charts embedded in Tkinter)."""
         tab = ttk.Frame(self.notebook)
         self.notebook.add(tab, text='📊  Visualise')
 
@@ -248,6 +295,7 @@ class StudentTrackerApp:
     # ── Tab 4 : Report ────────────────────────────────────────────────────────
 
     def _build_tab_report(self) -> None:
+        """Build the Report tab (class statistics and text file export)."""
         tab = ttk.Frame(self.notebook)
         self.notebook.add(tab, text='📄  Report')
 
@@ -278,6 +326,12 @@ class StudentTrackerApp:
     # ──────────────────────────────────────────────────────────────────────────
 
     def add_grade(self) -> None:
+        """
+        Validate inputs and add a grade to a student's record.
+
+        If the student does not exist they are created.
+        All input is validated before any data is modified.
+        """
         name      = self.entry_name.get().strip()
         grade_str = self.entry_grade.get().strip()
         subject   = self.entry_subject.get().strip() or 'General'
@@ -346,6 +400,7 @@ class StudentTrackerApp:
                 "Save Error", "Grade was added in memory but could not be saved to file.")
 
     def remove_student(self) -> None:
+        """Remove the currently selected student after user confirmation."""
         selection = self._tree.selection()
         if not selection:
             messagebox.showwarning(
@@ -377,6 +432,10 @@ class StudentTrackerApp:
         self.entry_name.focus()
 
     def search_students(self) -> None:
+        """
+        Use linear search to find students whose name matches the query.
+        Partial, case-insensitive matching is supported.
+        """
         query = self._search_var.get().strip()
 
         if not query:
@@ -394,6 +453,7 @@ class StudentTrackerApp:
             foreground='#27ae60' if count > 0 else '#e74c3c')
 
     def show_all_in_search(self) -> None:
+        """Display all students in the Search tab results pane."""
         self._search_var.set('')
         self._populate_search_tree(self.students)
         self._search_status.config(
@@ -401,6 +461,18 @@ class StudentTrackerApp:
             foreground='#2980b9')
 
     def generate_chart(self) -> None:
+        """
+        Generate and embed a Matplotlib chart in the Visualise tab.
+
+        Chart types:
+          - 'bar'  : Average grade per student (sorted descending).
+          - 'pie'  : Proportion of students in each letter-grade band.
+          - 'hist' : Frequency histogram of all individual grade entries.
+
+        Reference:
+            Embedding Matplotlib in Tkinter:
+            https://matplotlib.org/stable/gallery/user_interfaces/embedding_in_tk_sgskip.html
+        """
         if not self.students:
             messagebox.showwarning(
                 "No Data", "Add some students first before generating a chart.")
@@ -494,6 +566,7 @@ class StudentTrackerApp:
             plt.close(fig)
 
     def do_export_report(self) -> None:
+        """Export a text report of all student grades to disk."""
         if not self.students:
             messagebox.showwarning("No Data", "No student records to export.")
             return
@@ -515,6 +588,15 @@ class StudentTrackerApp:
     # ──────────────────────────────────────────────────────────────────────────
 
     def _find_student(self, name: str):
+        """
+        Find a student by exact name match (case-insensitive).
+
+        Args:
+            name (str): The student's name.
+
+        Returns:
+            dict | None: The student dictionary, or None if not found.
+        """
         target = name.lower().strip()
         for s in self.students:
             if s['name'].lower() == target:
@@ -522,6 +604,10 @@ class StudentTrackerApp:
         return None
 
     def _refresh_student_list(self) -> None:
+        """
+        Clear and repopulate the Students treeview using bubble sort.
+        The sort key and direction come from the radio buttons and checkbox.
+        """
         # Remove all existing rows
         for row in self._tree.get_children():
             self._tree.delete(row)
@@ -552,6 +638,12 @@ class StudentTrackerApp:
             ))
 
     def _populate_search_tree(self, results: list) -> None:
+        """
+        Populate the Search results treeview with the given student list.
+
+        Args:
+            results (list[dict]): Student dictionaries to display.
+        """
         for row in self._search_tree.get_children():
             self._search_tree.delete(row)
 
@@ -569,6 +661,7 @@ class StudentTrackerApp:
             ))
 
     def _update_stats(self) -> None:
+        """Compute and display class-wide statistics in the Report tab."""
         self._stats_box.config(state='normal')
         self._stats_box.delete('1.0', 'end')
 
@@ -612,6 +705,7 @@ class StudentTrackerApp:
         self._stats_box.config(state='disabled')
 
     def _on_row_select(self, _event) -> None:
+        """Pre-fill the name field when the user clicks a row in the list."""
         selection = self._tree.selection()
         if selection:
             name = self._tree.item(selection[0])['values'][0]
