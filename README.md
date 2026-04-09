@@ -1,6 +1,6 @@
 # Student Grade Tracker
 
-**Author      :** Nesibe Kubra Cakir
+**Author      :** Nesibe Kubra Cakir  
 **P-Number    :** P499632  
 **Course Code :** IY499 – Introduction to Programming  
 **GitHub      :** https://github.com/cakkirnesibe-byte/Student-Grade-Tracker 
